@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-class EmojiMemoryGame {
+class EmojiMemoryGame: ObservableObject {
     
     //static faz a var/func ser global porem dentro de sua classe
     static var emojis = ["🍆", "🍑", "🍌", "🍍", "🍏", "🍎", "🍊", "🍐", "🍉", "🍇", "🍓", "🫐", "🍒", "🍈", "🥭", "🥥", "🥝", "🍅", "🥑", "🌶"]
@@ -19,10 +19,16 @@ class EmojiMemoryGame {
     }
     
     //apenas a ViewModel pode ter acesso
-    private var model = creatMemoryGame()
+    @Published private var model = creatMemoryGame()
     
     //para acesso aos cards criar uma get only var
     var cards: Array<MemoryGame<String>.Card> {
-        return model.cards
+        model.cards
+    }
+    
+    // MARK - Intent(s)
+    
+    func choose(_ card: MemoryGame<String>.Card) {
+        model.choose(card)
     }
 }
