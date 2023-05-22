@@ -45,6 +45,8 @@ struct CardView: View {
                 // Retangulo com borda apenas
                 shape.strokeBorder(lineWidth: 3)
                 Text(card.content).font(.largeTitle)
+            } else if card.isMatched {
+                shape.opacity(0)
             } else {
                 // Preencher background da cor padrão
                 shape.fill()
