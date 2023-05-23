@@ -11,7 +11,12 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
     //proteger para alteração fora da struct
     private(set) var cards: [Card]
     
-    private var indexOfTheOneAndOnlyFaceUpCard: Int?
+    private var indexOfTheOneAndOnlyFaceUpCard: Int? {
+        //filtra o array e retorna o univo card virado para cima
+        get { cards.indices.filter{ cards[$0].isFaceUp }.oneAndOnly }
+        //percorre o array para setar o novo valor
+        set { cards.indices.forEach{ cards[$0].isFaceUp = ($0 == newValue) } }
+    }
     
     //mutating habilita a função modificar a struct
     mutating func choose(_ card: Card) {
@@ -24,21 +29,17 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
                     cards[chosenIndex].isMatched = true
                     cards[potentialMatchIndex].isMatched = true
                 }
-                indexOfTheOneAndOnlyFaceUpCard = nil
+                cards[chosenIndex].isFaceUp = true
             } else {
-                for index in cards.indices {
-                    cards[index].isFaceUp = false
-                }
                 indexOfTheOneAndOnlyFaceUpCard = chosenIndex
             }
-            cards[chosenIndex].isFaceUp.toggle()
         }
     }
 
     //como não sabemos o conteudo de cada card
     //passamos uma função que retorna o tipo flexivel "CardContent"
     init(numbreOfPairsOfCards: Int, createCardContent: (Int) -> CardContent) {
-        cards = Array<Card>()
+        cards = []
         for pairIndex in 0..<numbreOfPairsOfCards {
             let content = createCardContent(pairIndex)
             cards.append(Card(content: content, id: pairIndex*2))
@@ -47,9 +48,9 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
     }
     
     struct Card: Identifiable {
-        var isFaceUp: Bool = false
-        var isMatched: Bool = false
-        var content: CardContent ///Uso de generic type para flexibilização do conteudo de cada card
-        var id: Int
+        var isFaceUp = false
+        var isMatched = false
+        let content: CardContent ///Uso de generic type para flexibilização do conteudo de cada card
+        let id: Int
     }
 }
