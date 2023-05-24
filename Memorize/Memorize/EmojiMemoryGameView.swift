@@ -11,20 +11,24 @@ struct EmojiMemoryGameView: View {
     @ObservedObject var game: EmojiMemoryGame
     
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]) {
-                ForEach(game.cards) { card in
-                    CardView(card)
-                        .aspectRatio(2/3, contentMode: .fit)
-                        .onTapGesture {
-                            game.choose(card)
-                        }
-                }
+            AspectVGrid(items: game.cards, aspectRatio: 2/3) { card in
+                cardView(for: card)
             }
-        }
         .foregroundColor(.red) ///Cor de tudo dentro da scrollview
         .padding(.horizontal)///Espaçamento horizontal
-        .font(.largeTitle)
+    }
+    
+    @ViewBuilder
+    private func cardView(for card: EmojiMemoryGame.Card) -> some View {
+        if card.isMatched && !card.isFaceUp {
+            Rectangle().opacity(0)
+        } else {
+            CardView(card)
+                .padding(4)
+                .onTapGesture {
+                    game.choose(card)
+                }
+        }
     }
 }
 
@@ -57,9 +61,9 @@ struct CardView: View {
     }
     
     private struct DrawingConstants {
-        static let cornerRadius: CGFloat = 20
+        static let cornerRadius: CGFloat = 10
         static let lineWidth: CGFloat = 3
-        static let fontScale: CGFloat = 0.8
+        static let fontScale: CGFloat = 0.75
     }
     
     private func font(in size: CGSize) -> Font {
@@ -73,8 +77,8 @@ struct ContentView_Previews: PreviewProvider {
         let game = EmojiMemoryGame()
         
         // Configura preview com tema escuro
-//        EmojiMemoryGameView(game: game).preferredColorScheme(.dark)
+        EmojiMemoryGameView(game: game).preferredColorScheme(.dark)
         // Apresenta outro review com tema claro
-        EmojiMemoryGameView(game: game).preferredColorScheme(.light).previewInterfaceOrientation(.portrait)
+//        EmojiMemoryGameView(game: game).preferredColorScheme(.light).previewInterfaceOrientation(.portrait)
     }
 }
