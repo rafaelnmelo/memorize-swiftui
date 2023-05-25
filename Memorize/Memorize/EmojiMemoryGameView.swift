@@ -42,25 +42,13 @@ struct CardView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                //Iniciar com borda arredondada
-                let shape = RoundedRectangle(cornerRadius: DrawingConstants.cornerRadius)
-                if card.isFaceUp {
-                    // Preencher fundo com cor branca
-                    shape.fill().foregroundColor(.white)
-                    // Retangulo com borda apenas
-                    shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
-                    Pie(startAngle: Angle(degrees: 0-90),
-                        endAngle: Angle(degrees: 110-90))
-                    .padding(DrawingConstants.circlePadding)
-                    .opacity(DrawingConstants.circleOpacity)
-                    Text(card.content).font(font(in: geometry.size))
-                } else if card.isMatched {
-                    shape.opacity(0)
-                } else {
-                    // Preencher background da cor padrão
-                    shape.fill()
-                }
+                Pie(startAngle: Angle(degrees: 0-90),
+                    endAngle: Angle(degrees: 110-90))
+                .padding(DrawingConstants.circlePadding)
+                .opacity(DrawingConstants.circleOpacity)
+                Text(card.content).font(font(in: geometry.size))
             }
+            .cardify(isFaceUp: card.isFaceUp)
         }
     }
     
