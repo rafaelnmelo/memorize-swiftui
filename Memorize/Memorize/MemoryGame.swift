@@ -35,6 +35,10 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
             }
         }
     }
+    
+    mutating func shuffle() {
+        cards.shuffle()
+    }
 
     //como não sabemos o conteudo de cada card
     //passamos uma função que retorna o tipo flexivel "CardContent"
@@ -45,6 +49,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
             cards.append(Card(content: content, id: pairIndex*2))
             cards.append(Card(content: content, id: pairIndex*2+1))
         }
+        cards.shuffle()
     }
     
     struct Card: Identifiable {

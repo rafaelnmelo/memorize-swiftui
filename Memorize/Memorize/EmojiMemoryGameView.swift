@@ -11,25 +11,36 @@ struct EmojiMemoryGameView: View {
     @ObservedObject var game: EmojiMemoryGame
     
     var body: some View {
-            AspectVGrid(items: game.cards, aspectRatio: 2/3) { card in
-                cardView(for: card)
-            }
-        //Cor de tudo dentro da view
-        .foregroundColor(.red)
-        //Espaçamento horizontal
-        .padding(.horizontal)
+        VStack {
+            gameBody
+            shuffle
+        }
+        //Espaçamento das margens
+        .padding()
     }
     
-    @ViewBuilder
-    private func cardView(for card: EmojiMemoryGame.Card) -> some View {
-        if card.isMatched && !card.isFaceUp {
-            Rectangle().opacity(0)
-        } else {
-            CardView(card)
-                .padding(4)
-                .onTapGesture {
-                    game.choose(card)
-                }
+    var gameBody: some View {
+        AspectVGrid(items: game.cards, aspectRatio: 2/3) { card in
+            if card.isMatched && !card.isFaceUp {
+                //Esconder a view
+                Color.clear
+            } else {
+                CardView(card)
+                    .padding(4)
+                    .onTapGesture {
+                        game.choose(card)
+                    }
+            }
+        }
+        //Cor de tudo dentro da view
+        .foregroundColor(.red)
+    }
+    
+    var shuffle: some View {
+        Button("Shuffle") {
+            withAnimation {
+                game.shuffle()
+            }
         }
     }
 }
