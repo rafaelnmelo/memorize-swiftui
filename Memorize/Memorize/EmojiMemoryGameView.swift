@@ -14,8 +14,10 @@ struct EmojiMemoryGameView: View {
             AspectVGrid(items: game.cards, aspectRatio: 2/3) { card in
                 cardView(for: card)
             }
-        .foregroundColor(.red) ///Cor de tudo dentro da scrollview
-        .padding(.horizontal)///Espaçamento horizontal
+        //Cor de tudo dentro da view
+        .foregroundColor(.red)
+        //Espaçamento horizontal
+        .padding(.horizontal)
     }
     
     @ViewBuilder
@@ -46,18 +48,28 @@ struct CardView: View {
                     endAngle: Angle(degrees: 110-90))
                 .padding(DrawingConstants.circlePadding)
                 .opacity(DrawingConstants.circleOpacity)
-                Text(card.content).font(font(in: geometry.size))
+                Text(card.content)
+                    // se mudar para isMatched irá fazer a rotação senão, manterá a posição
+                    .rotationEffect(Angle.degrees(card.isMatched ? 360 : 0))
+                    //duração e formato da transição
+                    .animation(Animation.linear(duration: 1).repeatForever(autoreverses: false))
+                    .font(Font.system(size: DrawingConstants.fontSize))
+                    //necessário pois a string não é animável
+                    .scaleEffect(scale(thatFits: geometry.size))
             }
             .cardify(isFaceUp: card.isFaceUp)
         }
     }
     
+    private func scale(thatFits size: CGSize) -> CGFloat {
+        min(size.width, size.height) / (DrawingConstants.fontSize / DrawingConstants.fontScale)
+    }
+    
     private struct DrawingConstants {
-        static let cornerRadius: CGFloat = 10
-        static let lineWidth: CGFloat = 3
         static let fontScale: CGFloat = 0.7
         static let circlePadding: CGFloat = 5
         static let circleOpacity: CGFloat = 0.5
+        static let fontSize: CGFloat = 32
     }
     
     private func font(in size: CGSize) -> Font {
@@ -69,7 +81,8 @@ struct CardView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         let game = EmojiMemoryGame()
-        game.choose(game.cards.first!)
+        //iniciar com o primeiro card selecionado
+//        game.choose(game.cards.first!)
         // Configura preview com tema escuro
         return EmojiMemoryGameView(game: game).preferredColorScheme(.dark)
         // Apresenta outro review com tema claro

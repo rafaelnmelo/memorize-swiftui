@@ -20,11 +20,12 @@ struct Cardify: ViewModifier {
                 shape.fill().foregroundColor(.white)
                 // Retangulo com borda apenas
                 shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
-                content
             } else {
                 // Preencher background da cor padrão
                 shape.fill()
             }
+            //deixará sempre carregada porem opacidade de acordo com o param
+            content.opacity(isFaceUp ? 1 : 0)
         }
     }
     
