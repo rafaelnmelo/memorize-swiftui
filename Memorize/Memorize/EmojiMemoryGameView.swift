@@ -49,6 +49,10 @@ struct CardView: View {
                     shape.fill().foregroundColor(.white)
                     // Retangulo com borda apenas
                     shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
+                    Pie(startAngle: Angle(degrees: 0-90),
+                        endAngle: Angle(degrees: 110-90))
+                    .padding(DrawingConstants.circlePadding)
+                    .opacity(DrawingConstants.circleOpacity)
                     Text(card.content).font(font(in: geometry.size))
                 } else if card.isMatched {
                     shape.opacity(0)
@@ -63,7 +67,9 @@ struct CardView: View {
     private struct DrawingConstants {
         static let cornerRadius: CGFloat = 10
         static let lineWidth: CGFloat = 3
-        static let fontScale: CGFloat = 0.75
+        static let fontScale: CGFloat = 0.7
+        static let circlePadding: CGFloat = 5
+        static let circleOpacity: CGFloat = 0.5
     }
     
     private func font(in size: CGSize) -> Font {
@@ -75,10 +81,10 @@ struct CardView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         let game = EmojiMemoryGame()
-        
+        game.choose(game.cards.first!)
         // Configura preview com tema escuro
-        EmojiMemoryGameView(game: game).preferredColorScheme(.dark)
+        return EmojiMemoryGameView(game: game).preferredColorScheme(.dark)
         // Apresenta outro review com tema claro
-//        EmojiMemoryGameView(game: game).preferredColorScheme(.light).previewInterfaceOrientation(.portrait)
+//        return EmojiMemoryGameView(game: game).preferredColorScheme(.light).previewInterfaceOrientation(.portrait)
     }
 }
