@@ -13,10 +13,18 @@ struct EmojiMemoryGameView: View {
     @Namespace private var dealingNamespace
     
     var body: some View {
-        VStack {
-            gameBody
+        //deixar deck embaixo durante animação
+        ZStack(alignment: .bottom) {
+            VStack {
+                gameBody
+                HStack {
+                    restart
+                    Spacer()
+                    shuffle
+                }
+                .padding(.horizontal)
+            }
             deckBody
-            shuffle
         }
         //Espaçamento das margens
         .padding()
@@ -99,6 +107,15 @@ struct EmojiMemoryGameView: View {
         }
     }
     
+    var restart: some View {
+        Button("Restart") {
+            withAnimation {
+                dealt = []
+                game.restart()
+            }
+        }
+    }
+    
     private struct CardConstants {
         static let redColor: Color = .red
         static let aspectRatio: CGFloat = 2/3
@@ -112,6 +129,8 @@ struct EmojiMemoryGameView: View {
 struct CardView: View {
     private var card: EmojiMemoryGame.Card
     
+    @State private var animatedBonusReamining: Double = 0
+    
     init(_ card: MemoryGame<String>.Card) {
         self.card = card
     }
@@ -119,8 +138,21 @@ struct CardView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Pie(startAngle: Angle(degrees: 0-90),
-                    endAngle: Angle(degrees: 110-90))
+                Group {
+                    if card.isConsumingBonusTime {
+                        Pie(startAngle: Angle(degrees: 0-90),
+                            endAngle: Angle(degrees: (1-animatedBonusReamining)*360-90))
+                        .onAppear {
+                            animatedBonusReamining = card.bonusRemaining
+                            withAnimation(.linear(duration: card.bonusTimeRemaining)) {
+                                animatedBonusReamining = 0
+                            }
+                        }
+                    } else {
+                        Pie(startAngle: Angle(degrees: 0-90),
+                            endAngle: Angle(degrees: (1-card.bonusRemaining)*360-90))
+                    }
+                }
                 .padding(DrawingConstants.circlePadding)
                 .opacity(DrawingConstants.circleOpacity)
                 Text(card.content)
